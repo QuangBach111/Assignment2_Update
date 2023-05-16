@@ -1,25 +1,50 @@
 
 function login(e) {
-    e.preventDefault();
+    event.preventDefault();
     var username = document.getElementById('alias').value;
     var password = document.getElementById('password').value;
-    let user_records = new Array();
-        user_records=JSON.parse(localStorage.getItem("users"))?JSON.parse(localStorage.getItem("users")):[]
 
-    for(var i = 0; i < user_records.length; i++) {
-        if (user_records[i] == null) {
-            alert("User doesn't be existed in the server");
-        }
-        else if ((username == user_records[i].username) && (password == user_records[i].password)) {
-            alert("Login successfully");
-        }
-        else if ((username != user_records[i].username) || (password != user_records[i].password)){
-            alert("User name or password is not correct.")
-        }
-        else {
-            alert("There is an error occurring during login section.");
-        }
+    var user = localStorage.getItem(username);
+    var data = JSON.parse(user);
+    
+    // check những điều kiện khi đăng nhập
+    // 1. User không tồn tại
+    if (user == null) {
+        alert("User doesn't be existed in the server");
     }
+    // 2. User tồn tại đăng nhập thành công
+    else if (username == data.username && password == data.password) {
+        jQuery.noConflict();
+        $('#exampleModal').modal('toggle');
+        alert("Login successfully!");
+
+        $(document).ready(function () { // function click nút login thành công
+            $("#btnLogin").hide();
+            $("#btnLogout").show();
+            $("#info").append(username);
+        });
+
+        data.isLogin = true;
+        localStorage.setItem(username, JSON.stringify(data));
+
+    }
+    // 3. Tên username hoặc password không chính xác
+    else if (username != data.username || password != data.password) {
+        alert("User name or password is not correct.");
+    }
+    // function click nút logout 
+    $(document).ready(function () {
+        $("#btnLogout").click(function () {
+            $("#btnLogin").show();
+            $("#btnLogout").hide();
+            window.location.href = "create-page.html";
+        });
+
+        data.isLogin = false;
+        localStorage.setItem(username, JSON.stringify(data));
+    });
+
+
 }
 
 // $(document).ready(function () {
