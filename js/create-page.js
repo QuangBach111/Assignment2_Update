@@ -1,98 +1,78 @@
-window.onload = function () {
-    // Add answer btn
-    $(document).on('click', '.btn-add-answer', function () {
-        var answer = $(this).closest('.answer').clone();
-        // Clear value in input
-        answer.find("input[type='text']").val('');
-        $(this).closest('.answer-list').append(answer);
+$(function () {
+    $("#navbar").load("login.html");
+});
+
+$(document).ready(function () {
+
+    var $questionItemField = $('#question-item-field-base');
+    // Retrieve the existing polls from local storage
+    var existingPolls = localStorage.getItem('polls');
+    var polls = existingPolls ? JSON.parse(existingPolls) : [];
+
+
+
+    $('.btn-add-answer').click(function () {
+        // var $newAnswer = $(document).prev('.answer-input-container').find('.answer-input:first').clone(true);
+        // $newAnswer.insertAfter($(document).prev('.answer-input-container').find('.answer-input:last'));
+        // console.log('aaa')
+
+
+        $('.answer-input-container').append($newAnswer);
     });
 
-    //  Add question btn
+
+    //    Add question button
     $('#btn-add-question').click(function () {
-        var question = $('.question:last').clone();
-        question.find("input[type='text']").val('');
-        // set at default answer (only one answer)
-        question.find('.answer:not(:first-child)').remove();
-        $('.question-list').append(question);
+        $('.question-field').append($questionItemField.clone());
     });
 
-    // Submit event
-    $('form').submit(function (event) {
-        event.preventDefault();
+    const addAnswerBtn = document.querySelectorAll('.btn-add-answer');
 
-        // Create poll obj
-        var pollObj = {
-            name: String,
-            question: [],
-            status: 'active'
-        };
+    addAnswerBtn.forEach(obj => {
+        console.log(obj.id);
+    })
 
-        // poll name
-        pollObj.name = $('.name-poll-input').val();
+// Handle form submission
+$('form').submit(function (event) {
+    event.preventDefault();
 
-        // Question loop
-        var $questionList = $('.question');
-        $questionList.each(function () {
-            // Create questionObj
-            var questionObj = {
-                questionContent: String,
-                answer: []
-            };
+    // Get the input values
+    var pollName = $('#name-poll').val();
+    var question = $('.question-input').val();
+    var mandatory = $('#checkMandatory').is(':checked');
+    var multipleOptions = $('#checkMultipleOption').is(':checked');
+    var answers = $('.answer-input').map(function () {
+        return $(this).val();
+    }).get();
 
-            // Get question input
-            questionObj.questionContent = $(this).find('.question-input').val();
-            console.log(`Question: ${questionObj.questionContent}`)
+    // Create a new poll object
+    var newPoll = {
+        name: pollName,
+        question: question,
+        mandatory: mandatory,
+        multipleOptions: multipleOptions,
+        answers: answers
+    };
 
-            // LOOP: answer
-            var $answerList =  $(this).find('.answer-field >.answer-list > .answer');
-            $answerList.each(function () {
+    // Add the new poll to the polls array
+    polls.push(newPoll);
 
-                // Create answer obj
-                var answerObj = {
-                    answerContent: String,
-                    result: Boolean
-                };
+    // Save the updated polls array to local storage
+    localStorage.setItem('polls', JSON.stringify(polls));
 
-                // Get answer content
-                answerObj.answerContent = $(this).find('.answer-input').val();
-                console.log(`\tanswer:${answerObj.answerContent} `)
+    // Reset the form
+    $('form')[0].reset();
 
-                // Add answerObj to questionObj
-                questionObj.answer.push(answerObj);
-            });
+    // Optionally display a success message or perform other actions
+
+    // Redirect to the list page
+    window.location.href = 'list-page.html';
 
 
 
-
-            // Add questionObj to pollObj
-            pollObj.question.push(questionObj);
-        })
-
-        // test
-        // console.log(`Poll name: ${pollObj.name}`);
-
-        // pollObj.question.forEach(question => {
-        //    console.log(`\tquestion: ${question.questionContent}`);
-        //
-        //    question.answer.forEach(answer => {
-        //        console.log(`\t\tanswer: ${answer.answerContent}`);
-        //    });
-        // });
-
-        // // get listItem from localStorage
-        // var listItems = localStorage.getItem('listItems');
-        //
-        // // Convert listItem to array
-        // listItems = JSON.parse(listItems);
-        //
-        // // Base on User to storage
-        // if(!listItems){
-        //     // Create
-        // }
-        // else{
-        //
-        // }
     });
 
+});
 
-}
+
+
