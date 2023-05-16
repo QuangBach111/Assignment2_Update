@@ -5,14 +5,27 @@ function register(e) {
   var email = document.getElementById("email").value;
   var password = document.getElementById("password").value;
   var confirmPassword = document.getElementById("repassword").value;
-  var isLogin = new Boolean();
-  var user = {
-    username: username,
-    email: email,
-    password: password,
-    repassword: password,
-    isLogin: false, 
-  };
+  var isLogin = false;
+
+  //Tạo object item 
+    var item = {
+        user: {
+            name: username,
+            password: password,
+            isLogin: isLogin,
+        },
+        pollList:[],
+    }
+    
+  // var user = {
+  //   username: username,
+  //   email: email,
+  //   password: password,
+  //   repassword: password,
+  //   isLogin: false, 
+  // };
+
+
   // Check điều kiện khi user đăng kí
   // 1. 4 dòng thông tin đều trống
   if (username == "" || email == "" || password == "" || confirmPassword == "") {
@@ -31,7 +44,7 @@ function register(e) {
   // 4. Đăng kí thành công 
   } else {
 
-      var json = JSON.stringify(user);
+      var json = JSON.stringify(item);
       localStorage.setItem(username, json);
       alert("Register successfully!");
       window.location.href = "create-page.html";

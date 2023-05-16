@@ -94,7 +94,7 @@ $(document).ready(function () {
 
             $.ajax({
                 type: 'GET',
-                url: 'http://127.0.0.1:5500/',
+                url: 'http://127.0.0.1:5501/',
                 success: function (resp) {
                     window.location.href = 'home-page.html';
                 },
