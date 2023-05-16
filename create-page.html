@@ -28,16 +28,23 @@
 
         <!--  form-->
         <form>
-            <!--      Name poll field      -->
-            <input type="text" class="form-control" id="name-poll" name="inputQuestion"
+            <!--      Name poll input      -->
+            <input type="text"
+                   class="form-control name-poll-input"
+                   name="input-poll"
                    placeholder="Name poll"
-                   required/>
+            />
+            <!--      end of Name poll input      -->
 
-            <!-- Question field-->
-            <div class="question-field form-group">
-                <div id="question-item-field-base" class="question-item-field">
-                    <input type="text" class="form-control question-input" name="inputQuestion"
-                           placeholder="Enter your question" required/>
+            <!-- Question list-->
+            <div class="question-list form-group">
+                <!--    Question-->
+                <div class="question">
+                    <input type="text"
+                           class="form-control question-input"
+                           name="inputQuestion"
+                           placeholder="Enter your question"
+                    />
 
                     <!-- check box: mandatory-->
                     <div class="form-group form-check mt-4">
@@ -58,33 +65,44 @@
                     <!--  Answer field-->
                     <div class="answer-field form-group row">
                         <label class="col-sm-2 col-form-label">Possible answers</label>
-                        <div class="answer-items d-flex" id="answer-item-base">
-                            <div class="answer-input-container">
+                        <!--      answer list-->
+                        <div class="answer-list">
+
+                            <!--      Answer-->
+                            <div class="answer d-flex">
+
+                                <!--       Answer input-->
                                 <input type="text" class="form-control answer-input"
                                        placeholder="Type your answer"
-                                       required/>
-                            </div>
-                            <div class="input-group-append">
+                                       name="answerInput[]"
+                                />
+                                <!--       end of Answer input-->
+
+                                <!--           add answer btn-->
                                 <button class="btn btn-info btn-add-answer" type="button">+</button>
+                                <!--           end of add answer btn-->
                             </div>
+                            <!--    End of Answer-->
+
                         </div>
+                        <!--     end of answer list-->
+
 
                     </div>
                     <!--  end of Answer field-->
                 </div>
+                <!--    end of Question-->
             </div>
-            <!-- end of Question field-->
+            <!-- end of Question list-->
 
-            <!--            Add button-->
-            <div class="form-group">
-                <button id="btn-add-question" class="btn btn-success" type="button">+ Add
-                    question
-                </button>
-            </div>
+            <!--            Add question button-->
+            <button id="btn-add-question" class="btn btn-success" type="button">+ Add
+                question
+            </button>
             <!--            end of add button-->
 
             <div class="text-center">
-                <button class="text-center btn btn-secondary" id="submit">Retain</button>
+                <button class="text-center btn btn-secondary btn-retain" type="submit">Retain</button>
             </div>
         </form>
     </div>

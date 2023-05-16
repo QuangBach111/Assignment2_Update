@@ -23,36 +23,44 @@ function login(e) {
 }
 
 // $(document).ready(function () {
-//     var alias;
-//     var password;
+//
 //
 //     var userObj = {
 //         user: {
-//             alias: alias,
-//             password: password
+//             alias: 'user',
+//             password: 'password'
 //         },
 //         poll: []
 //     };
 //
-//     var pollObject = {
+//     var pollObj = {
 //         question: [],
-//         status: ''
+//         status: 'active' //active, close
 //     }
 //     pollObject.question.push(question1);
 //
-//     var question =  {
+//     var questionObj =  {
 //         answer: []
 //     }
 //
-//     var answer = {
+//     var answerObj = {
 //         answerContent: '',
 //         result: true
-//     }
+//     };
 //
+//     // 1 questio - > nhiều answer
+//     questionObj.answer.push(answerObj);
 //
 //     // 1 poll -> có nhiều question
-//     // 1 questio - > nhiều answer
+//     pollObj.question.push(questionObj);
 //
-//     //Get List item from localStorage
-//     var listItems = localStorage.getItem('listItems');
+//     //     User có nhiều poll
+//     userObj.poll.push(pollObj);
+//
+//     //ListItem trong storage lưu được nhiều user
+//     var listItems = localStorage.getItem('listItems'); // get JSON string
+//
+//     listItems = JSON.parse(listItems); //Convert into array
+//
+//     listItems.push(userObj); //push userObj
 // })
