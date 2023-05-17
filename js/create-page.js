@@ -78,37 +78,38 @@ $(document).ready(function () {
         } else {
             // Convert itemList to array
             itemList = JSON.parse(itemList);
+            console.log(itemList);
             let item = null;
             // Find the user login
             item = itemList.find(currentItem => {
                 return currentItem.user.isLogin === true;
             });
 
-            // If no login
-            if (item === null) {
-                // pop up login modal
-                $('#navbar').find('#exampleModal').modal('show');
-            } else {
-                // Push new poll to item
-                item.pollList.push(pollObj);
-
-                // Convert to string
-                itemList = JSON.stringify(itemList);
-
-                // Stored it into localStorage
-                localStorage.setItem('itemList', itemList);
-
-                // Redirect: home-page.html
-                $.ajax({
-                    type: 'GET',
-                    success: function (resp) {
-                        window.location.href = 'home-page.html';
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
-            }
+            // // If no login
+            // if (item === null) {
+            //     // pop up login modal
+            //     $('#navbar').find('#exampleModal').modal('show');
+            // } else {
+            //     // Push new poll to item
+            //     item.pollList.push(pollObj);
+            //
+            //     // Convert to string
+            //     itemList = JSON.stringify(itemList);
+            //
+            //     // Stored it into localStorage
+            //     localStorage.setItem('itemList', itemList);
+            //
+            //     // Redirect: home-page.html
+            //     $.ajax({
+            //         type: 'GET',
+            //         success: function (resp) {
+            //             window.location.href = 'home-page.html';
+            //         },
+            //         error: function (error) {
+            //             console.log(error);
+            //         }
+            //     });
+            // }
 
         }
     });
