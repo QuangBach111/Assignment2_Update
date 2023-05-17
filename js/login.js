@@ -1,66 +1,51 @@
 
 function login(e) {
-    e.preventDefault();
+    event.preventDefault();
     var username = document.getElementById('alias').value;
     var password = document.getElementById('password').value;
-    let user_records = new Array();
-        user_records=JSON.parse(localStorage.getItem("users"))?JSON.parse(localStorage.getItem("users")):[]
 
-    for(var i = 0; i < user_records.length; i++) {
-        if (user_records[i] == null) {
-            alert("User doesn't be existed in the server");
-        }
-        else if ((username == user_records[i].username) && (password == user_records[i].password)) {
-            alert("Login successfully");
-        }
-        else if ((username != user_records[i].username) || (password != user_records[i].password)){
-            alert("User name or password is not correct.")
-        }
-        else {
-            alert("There is an error occurring during login section.");
-        }
+    var itemList = localStorage.getItem(username);
+    var item = JSON.parse(itemList);
+
+    // Validate login
+    // 1. User doesn't be existed
+    if (itemList == null) {
+        alert("User doesn't be existed in the server");
     }
+    // 2. Existing user login successfully
+    else if (username == item.user.name && password == item.user.password) {
+        jQuery.noConflict();
+        $('#exampleModal').modal('toggle');
+        alert("Login successfully!");
+
+        $(document).ready(function () { // function click nút login thành công
+            $("#btnLogin").hide();
+            $("#btnLogout").show();
+            $("#info").append(username);
+        });
+
+        item.user.isLogin = true;
+        localStorage.setItem('itemList', JSON.stringify(item));
+        localStorage.setItem(username, JSON.stringify(item));
+    }
+    // 3. Username or password wrong
+    else if (username != item.user.name || password != item.user.password) {
+        alert("User name or password is not correct.");
+    }
+
 }
 
-// $(document).ready(function () {
-//
-//
-//     var userObj = {
-//         user: {
-//             alias: 'user',
-//             password: 'password'
-//         },
-//         poll: []
-//     };
-//
-//     var pollObj = {
-//         question: [],
-//         status: 'active' //active, close
-//     }
-//     pollObject.question.push(question1);
-//
-//     var questionObj =  {
-//         answer: []
-//     }
-//
-//     var answerObj = {
-//         answerContent: '',
-//         result: true
-//     };
-//
-//     // 1 questio - > nhiều answer
-//     questionObj.answer.push(answerObj);
-//
-//     // 1 poll -> có nhiều question
-//     pollObj.question.push(questionObj);
-//
-//     //     User có nhiều poll
-//     userObj.poll.push(pollObj);
-//
-//     //ListItem trong storage lưu được nhiều user
-//     var listItems = localStorage.getItem('listItems'); // get JSON string
-//
-//     listItems = JSON.parse(listItems); //Convert into array
-//
-//     listItems.push(userObj); //push userObj
-// })
+// function click nút logout 
+$(document).ready(function () {
+    $("#btnLogout").click(function () {
+        var username = document.getElementById('alias').value;
+        var itemList = localStorage.getItem(username);
+        var item = JSON.parse(itemList);
+        $("#btnLogin").show();
+        $("#btnLogout").hide();
+        item.user.isLogin = false;
+        localStorage.setItem(username, JSON.stringify(item));
+        localStorage.setItem('itemList', JSON.stringify(item));
+        window.location.href = "create-page.html";
+    });
+});

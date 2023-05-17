@@ -73,7 +73,8 @@ $(document).ready(function () {
 
         // listItems is null, show login page
         if (!itemList) {
-            // pop up login modal
+            // pop up login modal   
+            jQuery.noConflict();
             $('#navbar').find('#exampleModal').modal('show');
         } else {
             // Convert itemList to array
@@ -111,6 +112,16 @@ $(document).ready(function () {
             //     });
             // }
 
+            $.ajax({
+                type: 'GET',
+                url: 'http://127.0.0.1:5501/',
+                success: function (resp) {
+                    window.location.href = 'home-page.html';
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
         }
     });
 })
