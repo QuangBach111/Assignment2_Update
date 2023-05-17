@@ -25,8 +25,8 @@ function login(e) {
         });
 
         item.user.isLogin = true;
+        localStorage.setItem('itemList', JSON.stringify(item));
         localStorage.setItem(username, JSON.stringify(item));
-
     }
     // 3. Username or password wrong
     else if (username != item.user.name || password != item.user.password) {
@@ -45,6 +45,7 @@ $(document).ready(function () {
         $("#btnLogout").hide();
         item.user.isLogin = false;
         localStorage.setItem(username, JSON.stringify(item));
+        localStorage.setItem('itemList', JSON.stringify(item));
         window.location.href = "create-page.html";
     });
 });
