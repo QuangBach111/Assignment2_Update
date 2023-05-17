@@ -14,7 +14,7 @@ function register(e) {
             password: password,
             isLogin: isLogin,
         },
-        poll:[],  
+        pollList:[],  
     }
     
   // Check validate register
