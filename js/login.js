@@ -4,7 +4,7 @@ function login(e) {
     var username = document.getElementById('alias').value;
     var password = document.getElementById('password').value;
 
-    var itemList = localStorage.getItem('itemList');
+    var itemList = localStorage.getItem(username);
     var item = JSON.parse(itemList);
 
     // Validate login
@@ -25,7 +25,7 @@ function login(e) {
         });
 
         item.user.isLogin = true;
-        localStorage.setItem('itemList', JSON.stringify(item));
+        localStorage.setItem(username, JSON.stringify(item));
 
     }
     // 3. Username or password wrong
@@ -39,12 +39,12 @@ function login(e) {
 $(document).ready(function () {
     $("#btnLogout").click(function () {
         var username = document.getElementById('alias').value;
-        var itemList = localStorage.getItem('itemList');
+        var itemList = localStorage.getItem(username);
         var item = JSON.parse(itemList);
         $("#btnLogin").show();
         $("#btnLogout").hide();
         item.user.isLogin = false;
-        localStorage.setItem('itemList', JSON.stringify(item));
+        localStorage.setItem(username, JSON.stringify(item));
         window.location.href = "create-page.html";
     });
 });

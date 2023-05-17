@@ -14,7 +14,7 @@ function register(e) {
             password: password,
             isLogin: isLogin,
         },
-        pollList:[],
+        poll:[],  
     }
     
   // Check validate register
@@ -36,7 +36,7 @@ function register(e) {
   } else {
 
       var json = JSON.stringify(item);
-      localStorage.setItem('itemList', json);
+      localStorage.setItem(username, json);
       alert("Register successfully!");
       window.location.href = "create-page.html";
   } 
