@@ -1,13 +1,13 @@
 function register(e) {
   event.preventDefault();
-  // khai báo những biến của user
+  // Declare var elements of user
   var username = document.getElementById("username").value;
   var email = document.getElementById("email").value;
   var password = document.getElementById("password").value;
   var confirmPassword = document.getElementById("repassword").value;
   var isLogin = false;
 
-  //Tạo object item 
+  // Createl object item
     var item = {
         user: {
             name: username,
@@ -26,22 +26,22 @@ function register(e) {
   // };
 
 
-  // Check điều kiện khi user đăng kí
-  // 1. 4 dòng thông tin đều trống
+  // Check validate register
+  // 1. User dont't input 4 fields
   if (username == "" || email == "" || password == "" || confirmPassword == "") {
     alert("All fields are required. Please complete the form.");
     return false;
   }
-  // 2. Điều kiện email 
+  // 2. Validate email
   if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
     alert("Please enter a valid email address.");
     return false;
   }
-  // 3. Điều kiện password và repasword không trùng khớp nhau
+  // 3. Validate password and repassword do not match 
   if (password != confirmPassword) {
     alert("Password and re-password fields do not match.");
     return false;
-  // 4. Đăng kí thành công 
+  // 4. Resgister successfully
   } else {
 
       var json = JSON.stringify(item);

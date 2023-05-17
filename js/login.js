@@ -7,12 +7,12 @@ function login(e) {
     var itemList = localStorage.getItem(username);
     var item = JSON.parse(itemList);
 
-    // check những điều kiện khi đăng nhập
-    // 1. User không tồn tại
+    // Validate login
+    // 1. User doesn't be existed
     if (itemList == null) {
         alert("User doesn't be existed in the server");
     }
-    // 2. User tồn tại đăng nhập thành công
+    // 2. Existing user login successfully
     else if (username == item.user.name && password == item.user.password) {
         jQuery.noConflict();
         $('#exampleModal').modal('toggle');
@@ -28,7 +28,7 @@ function login(e) {
         localStorage.setItem(username, JSON.stringify(item));
 
     }
-    // 3. Tên username hoặc password không chính xác
+    // 3. Username or password wrong
     else if (username != item.user.name || password != item.user.password) {
         alert("User name or password is not correct.");
     }
