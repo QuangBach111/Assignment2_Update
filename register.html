@@ -14,15 +14,17 @@
     <link rel="stylesheet" href="css/register.css">
 </head>
 <body>
-<div id="navbar"></div>
-
 <div class="container">
     <div class="row justify-content-center align-items-center">
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header"><b>Register</b></div>
                 <div class="card-body">
-                    <form name="registrationForm" onsubmit="return validateForm()">
+
+                    <!-- Register Form -->
+                    <form name="registrationForm" onsubmit="register()">
+
+                        <!-- Input username-->
                         <div class="form-group row was-validated">
                             <div class="w-100 mx-3">
                                 <input type="text" id="username" class="form-control" name="username"
@@ -30,6 +32,7 @@
                             </div>
                         </div>
 
+                        <!-- Input email -->
                         <div class="form-group row was-validated">
                             <div class="w-100 mx-3">
                                 <input type="email" id="email" class="form-control" name="email" placeholder="E-mail"
@@ -37,6 +40,7 @@
                             </div>
                         </div>
 
+                        <!-- Input password -->
                         <div class="form-group row was-validated">
                             <div class="w-100 mx-3">
                                 <input type="password" id="password" class="form-control" name="password"
@@ -44,6 +48,7 @@
                             </div>
                         </div>
 
+                        <!-- Input repassword -->
                         <div class="form-group row was-validated">
                             <div class="w-100 mx-3">
                                 <input type="password" id="repassword" class="form-control" name="repassword"
@@ -51,10 +56,12 @@
                             </div>
                         </div>
 
-
+                        <!-- Register button -->
                         <input type="submit"
                                class="btn btn-outline-primary bg-success text-white btn-block rounded w-100 mb-4"
                                value="Register">
+
+                        <!-- Back to create page -->
                         <a href="create-page.html" class="w-100 text-center"> Click here to Home</a>
                     </form>
                 </div>
