@@ -73,7 +73,8 @@ $(document).ready(function () {
 
         // listItems is null, show login page
         if (!itemList) {
-            // pop up login modal
+            // pop up login modal   
+            jQuerry.noConflict();
             $('#navbar').find('#exampleModal').modal('show');
         } else {
             // Convert itemList to array

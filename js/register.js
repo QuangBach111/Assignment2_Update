@@ -17,15 +17,6 @@ function register(e) {
         pollList:[],
     }
     
-  // var user = {
-  //   username: username,
-  //   email: email,
-  //   password: password,
-  //   repassword: password,
-  //   isLogin: false, 
-  // };
-
-
   // Check validate register
   // 1. User dont't input 4 fields
   if (username == "" || email == "" || password == "" || confirmPassword == "") {
@@ -45,7 +36,7 @@ function register(e) {
   } else {
 
       var json = JSON.stringify(item);
-      localStorage.setItem(username, json);
+      localStorage.setItem('itemList', json);
       alert("Register successfully!");
       window.location.href = "create-page.html";
   } 
