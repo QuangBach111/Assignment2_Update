@@ -40,10 +40,7 @@ function register(e) {
 
   // 4. Resgister successfully 
   else {
-      var json = JSON.stringify(item);
-      localStorage.setItem(username, json);
-
-      // Push user lên array itemList
+     // Push user lên array itemList
       itemList.push({item});
       localStorage.setItem('itemList', JSON.stringify(itemList));
 
