@@ -1,8 +1,8 @@
 $(document).ready(function () {
     //load navbar
-    $(function () {
-        $("#navbar").load("login.html");
-    });
+    // $(function () {
+    //     $("#navbar").load("login.html");
+    // });
 
     // Add answer btn
     $(document).on('click', '.btn-add-answer', function () {
@@ -27,18 +27,21 @@ $(document).ready(function () {
 
         // Create poll obj
         var pollObj = {
-            name: String,
+            name: '',
             questionList: [],
             isActive: true
         };
+
+        console.log(pollObj.isActive);
 
         // poll name
         pollObj.name = $('.name-poll-input').val();
 
         // Question loop
         $('.question').each(function () {
+
             // Create questionObj
-            var questionObj = {
+            let questionObj = {
                 questionContent: String,
                 answerList: []
             };
@@ -47,11 +50,11 @@ $(document).ready(function () {
             questionObj.questionContent = $(this).find('.question-input').val();
 
             // LOOP: answer
-            var $answerList = $(this).find('.answer-field >.answer-list > .answer');
+            let $answerList = $(this).find('.answer-field >.answer-list > .answer');
             $answerList.each(function () {
 
                 // Create answer obj
-                var answerObj = {
+                let answerObj = {
                     answerContent: String,
                     status: Boolean
                 };
@@ -67,60 +70,68 @@ $(document).ready(function () {
             pollObj.questionList.push(questionObj);
         });
 
+        console.log(`before pollObj ${pollObj}`);
+
         // get listItem from localStorage (JSON)
-        var itemList = localStorage.getItem('itemList');
+        let itemList = localStorage.getItem('itemList');
+
+        // Convert itemList to array
+        itemList = JSON.parse(itemList);
+
         console.log(`itemList String: ${itemList}`);
 
         // listItems is null, show login page
         if (!itemList) {
             // pop up login modal   
-            jQuery.noConflict();
+            // jQuery.noConflict();
             $('#navbar').find('#exampleModal').modal('show');
         } else {
-            // Convert itemList to array
-            itemList = JSON.parse(itemList);
-            let item = null;
             // Find the user login
-            item = itemList.find(currentItem => {
-                return currentItem.item.user.isLogin === true;
-            });
 
-            // If no login
-            if (item === null) {
-                // pop up login modal
-                $('#navbar').find('#exampleModal').modal('show');
-            } else {
-                // Push new poll to item
-                item.pollList.push({pollObj});
-
-                // Convert to string
-                itemList = JSON.stringify(itemList);
-
-                // Stored it into localStorage
-                localStorage.setItem('itemList', itemList);
-
-                // Redirect: home-page.html
-                $.ajax({
-                    type: 'GET',
-                    success: function (resp) {
-                        window.location.href = 'home-page.html';
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
-            }
-
-            $.ajax({
-                type: 'GET',
-                url: 'http://127.0.0.1:5501/',
-                success: function (resp) {
-                    window.location.href = 'home-page.html';
-                },
-                error: function (error) {
-                    console.log(error);
+            for (let i = 0; i < itemList.length; i++) {
+                let currentItem = itemList[i];
+                if(currentItem.item.user.isLogin === true){
+                    var item = itemList[i];
+                    break;
                 }
-            });
+            }
+            console.log(item);
+            // // If no login
+            // if (item === null) {
+            //     // pop up login modal
+            //     $('#navbar').find('#exampleModal').modal('show');
+            // } else {
+
+                // Push new poll to item
+                // item.pollList.push(pollObj);
+                //
+                // // Convert to string
+                // itemList = JSON.stringify(itemList);
+                //
+                // // Stored it into localStorage
+                // localStorage.setItem('itemList', itemList);
+                //
+                // // Redirect: home-page.html
+                // $.ajax({
+                //     type: 'GET',
+                //     success: function (resp) {
+                //         window.location.href = 'home-page.html';
+                //     },
+                //     error: function (error) {
+                //         console.log(error);
+                //     }
+                // });
+            // }
+
+            // $.ajax({
+            //     type: 'GET',
+            //     success: function (resp) {
+            //         window.location.href = 'home-page.html';
+            //     },
+            //     error: function (error) {
+            //         console.log(error);
+            //     }
+            // });
         }
     });
 })

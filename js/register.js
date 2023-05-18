@@ -8,7 +8,7 @@ function register(e) {
   var isLogin = false;
 
   let itemList = new Array();
-  itemList = JSON.parse(localStorage.getItem("itemList"))?JSON.parse(localStorage.getItem("itemList")):[]
+  itemList = JSON.parse(localStorage.getItem("itemList"))?JSON.parse(localStorage.getItem("itemList")):[];
   // Create object item
     var item = {
         user: {
