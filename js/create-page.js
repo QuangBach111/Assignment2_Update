@@ -91,7 +91,7 @@ $(document).ready(function () {
                 $('#navbar').find('#exampleModal').modal('show');
             } else {
                 // Push new poll to item
-                item.pollList.push({pollObj});
+                item.item.pollList.push(pollObj);
 
                 // Convert to string
                 itemList = JSON.stringify(itemList);
