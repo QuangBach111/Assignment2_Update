@@ -32,7 +32,7 @@ $('form').submit(function (event) {
         var pollObj = {
             name: String,
             questionList: [],
-            status: true
+            isActive: true
         };
 
     // Add the new poll to the polls array
@@ -45,16 +45,16 @@ $('form').submit(function (event) {
     $('form')[0].reset();
 
         // Question loop
-        var $questionList = $('.question');
-        $questionList.each(function () {
+        $('.question').each(function () {
             // Create questionObj
             var questionObj = {
                 questionContent: String,
                 answerList: []
             };
 
-    // Redirect to the list page
-    window.location.href = 'list-page.html';
+            // Get question input
+            questionObj.questionContent = $(this).find('.question-input').val();
+
 
             // LOOP: answer
             var $answerList = $(this).find('.answer-field >.answer-list > .answer');
@@ -66,7 +66,10 @@ $('form').submit(function (event) {
                     status: Boolean
                 };
 
-    });
+
+                // Get answer content
+                answerObj.answerContent = $(this).find('.answer-input').val();
+
 
                 // Add answerObj to questionObj
                 questionObj.answerList.push(answerObj);
@@ -76,31 +79,53 @@ $('form').submit(function (event) {
             pollObj.questionList.push(questionObj);
         });
 
-        // get listItem from localStorage
+        // get listItem from localStorage (JSON)
         var itemList = localStorage.getItem('itemList');
-        var item = null;
+        console.log(`itemList String: ${itemList}`);
 
-        // listItems is null
+        // listItems is null, show login page
         if (!itemList) {
-            alert('Please login');
+            // pop up login modal   
+            jQuery.noConflict();
+            $('#navbar').find('#exampleModal').modal('show');
         } else {
-            // Convert listItem to array
+            // Convert itemList to array
             itemList = JSON.parse(itemList);
-
+            let item = null;
             // Find the user login
-            item = itemList.filter(index => {
-                return index.user.isLogin === true;
+            item = itemList.find(currentItem => {
+                return currentItem.item.user.isLogin === true;
             });
 
-            // Push pollObj to item
-            item.pollList.push(pollObj);
+            // If no login
+            if (item === null) {
+                // pop up login modal
+                $('#navbar').find('#exampleModal').modal('show');
+            } else {
+                // Push new poll to item
+                item.item.pollList.push(pollObj);
 
-            itemList = JSON.stringify(itemList);
-            localStorage.setItem('itemList', itemList);
+                // Convert to string
+                itemList = JSON.stringify(itemList);
+
+                // Stored it into localStorage
+                localStorage.setItem('itemList', itemList);
+
+                // Redirect: home-page.html
+                $.ajax({
+                    type: 'GET',
+                    success: function (resp) {
+                        window.location.href = 'home-page.html';
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
 
             $.ajax({
                 type: 'GET',
-                url: 'http://127.0.0.1:5500/',
+                url: 'http://127.0.0.1:5501/',
                 success: function (resp) {
                     window.location.href = 'home-page.html';
                 },

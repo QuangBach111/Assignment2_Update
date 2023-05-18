@@ -1,66 +1,44 @@
-
 function login(e) {
-    e.preventDefault();
+    event.preventDefault();
     var username = document.getElementById('alias').value;
     var password = document.getElementById('password').value;
-    let user_records = new Array();
-        user_records=JSON.parse(localStorage.getItem("users"))?JSON.parse(localStorage.getItem("users")):[]
 
-    for(var i = 0; i < user_records.length; i++) {
-        if (user_records[i] == null) {
-            alert("User doesn't be existed in the server");
-        }
-        else if ((username == user_records[i].username) && (password == user_records[i].password)) {
-            alert("Login successfully");
-        }
-        else if ((username != user_records[i].username) || (password != user_records[i].password)){
-            alert("User name or password is not correct.")
-        }
-        else {
-            alert("There is an error occurring during login section.");
+    // Khai báo mảng listItem
+    let list = new Array();
+    list = JSON.parse(localStorage.getItem("itemList"))?JSON.parse(localStorage.getItem("itemList")):[]
+
+    // Vòng lặp for để kiểm tra điều kiện từng phần tử trong mảng
+    for(var i = 0; i < list.length; i++) {
+        if (username == list[i].item.user.name) {
+            if (password == list[i].item.user.password) {
+                alert("Login successfully!");
+                jQuery.noConflict();
+                $('#exampleModal').modal('toggle');
+        
+                $(document).ready(function () { // function click nút login thành công
+                    $("#btnLogin").hide();
+                    $("#btnLogout").show();
+                    $("#info").text(" " + username + " ");
+                });
+
+                list[i].item.user.isLogin = true; // trả isLogin = true
+                localStorage.setItem('itemList', JSON.stringify(list));
+            } else {
+                alert("Your password is not correct!");
+            }
         }
     }
-}
 
-// $(document).ready(function () {
-//
-//
-//     var userObj = {
-//         user: {
-//             alias: 'user',
-//             password: 'password'
-//         },
-//         poll: []
-//     };
-//
-//     var pollObj = {
-//         question: [],
-//         status: 'active' //active, close
-//     }
-//     pollObject.question.push(question1);
-//
-//     var questionObj =  {
-//         answer: []
-//     }
-//
-//     var answerObj = {
-//         answerContent: '',
-//         result: true
-//     };
-//
-//     // 1 questio - > nhiều answer
-//     questionObj.answer.push(answerObj);
-//
-//     // 1 poll -> có nhiều question
-//     pollObj.question.push(questionObj);
-//
-//     //     User có nhiều poll
-//     userObj.poll.push(pollObj);
-//
-//     //ListItem trong storage lưu được nhiều user
-//     var listItems = localStorage.getItem('listItems'); // get JSON string
-//
-//     listItems = JSON.parse(listItems); //Convert into array
-//
-//     listItems.push(userObj); //push userObj
-// })
+    $(document).ready(function () { // function click nút logout trả isLogin = false
+        $("#btnLogout").click(function () {
+            for(var i = 0; i < list.length; i++) {
+                if(username == list[i].item.user.name && password == list[i].item.user.password) {
+                    $("#btnLogin").show();
+                    $("#btnLogout").hide();
+                    list[i].item.user.isLogin = false;
+                    localStorage.setItem('itemList', JSON.stringify(list));
+                }
+            }
+        });
+    });
+}

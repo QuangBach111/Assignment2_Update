@@ -1,37 +1,50 @@
+function register(e) {
+  event.preventDefault();
+  // Declare var elements of user
+  var username = document.getElementById("username").value;
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("password").value;
+  var confirmPassword = document.getElementById("repassword").value;
+  var isLogin = false;
 
-$(function() {
-    $('#navbar').load("login.html");
-});
-
-function validateForm() {
-    var username = document.getElementById("username").value;
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
-    var confirmPassword = document.getElementById("repassword").value;
-    
-    if (username == "" || email == "" || password == "" || confirmPassword == "") {
-      alert("All fields are required. Please complete the form.");
-      return false;
+  let itemList = new Array();
+  itemList = JSON.parse(localStorage.getItem("itemList"))?JSON.parse(localStorage.getItem("itemList")):[]
+  // Create object item
+    var item = {
+        user: {
+            name: username,
+            password: password,
+            isLogin: isLogin,
+        },
+        pollList: [] 
     }
     
-    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-      alert("Please enter a valid email address.");
-      return false;
-    }
-    
-    if (password != confirmPassword) {
-      alert("Password and re-password fields do not match.");
-      return false;
-    } else {
-        let user_records = new Array();
-        user_records=JSON.parse(localStorage.getItem("users"))?JSON.parse(localStorage.getItem("users")):[]
+  // Check validate register
+  // 1. User dont't input 4 fields
+  if (username == "" || email == "" || password == "" || confirmPassword == "") {
+    alert("All fields are required. Please complete the form.");
+    return false;
+  }
 
-        user_records.push({
-            "username": username,
-            "password": password,
-        })
-        localStorage.setItem("users", JSON.stringify(user_records));
-        alert('Register successfully!');
-        window.location.href = "login.html";
-    } 
+  // 2. Validate email
+  if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+    alert("Please enter a valid email address.");
+    return false;
+  }
+
+  // 3. Validate password and repassword do not match 
+  if (password != confirmPassword) {
+    alert("Password and re-password fields do not match.");
+    return false;
+  }
+
+  // 4. Resgister successfully 
+  else {
+     // Push user lên array itemList
+      itemList.push({item});
+      localStorage.setItem('itemList', JSON.stringify(itemList));
+
+      alert("Register successfully!");
+      window.location.href = "create-page.html";
+  } 
 }
