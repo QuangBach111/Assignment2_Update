@@ -12,18 +12,21 @@ $(document).ready(function () {
         $(this).closest('.answer-list').append(answer);
     });
 
-    //  Add question btn
+
+    //    Add question button
     $('#btn-add-question').click(function () {
-        var question = $('.question:last').clone();
-        question.find("input[type='text']").val('');
-        // set at default answer (only one answer)
-        question.find('.answer:not(:first-child)').remove();
-        $('.question-list').append(question);
+        $('.question-field').append($questionItemField.clone());
     });
 
-    // Submit event
-    $('form').submit(function (event) {
-        event.preventDefault();
+    const addAnswerBtn = document.querySelectorAll('.btn-add-answer');
+
+    addAnswerBtn.forEach(obj => {
+        console.log(obj.id);
+    })
+
+// Handle form submission
+$('form').submit(function (event) {
+    event.preventDefault();
 
         // Create poll obj
         var pollObj = {
@@ -32,8 +35,14 @@ $(document).ready(function () {
             isActive: true
         };
 
-        // poll name
-        pollObj.name = $('.name-poll-input').val();
+    // Add the new poll to the polls array
+    polls.push(newPoll);
+
+    // Save the updated polls array to local storage
+    localStorage.setItem('polls', JSON.stringify(polls));
+
+    // Reset the form
+    $('form')[0].reset();
 
         // Question loop
         $('.question').each(function () {
@@ -46,6 +55,7 @@ $(document).ready(function () {
             // Get question input
             questionObj.questionContent = $(this).find('.question-input').val();
 
+
             // LOOP: answer
             var $answerList = $(this).find('.answer-field >.answer-list > .answer');
             $answerList.each(function () {
@@ -56,8 +66,10 @@ $(document).ready(function () {
                     status: Boolean
                 };
 
+
                 // Get answer content
                 answerObj.answerContent = $(this).find('.answer-input').val();
+
 
                 // Add answerObj to questionObj
                 questionObj.answerList.push(answerObj);
@@ -123,4 +135,4 @@ $(document).ready(function () {
             });
         }
     });
-})
+});
