@@ -7,14 +7,16 @@ function register(e) {
   var confirmPassword = document.getElementById("repassword").value;
   var isLogin = false;
 
-  // Createl object item
+  let itemList = new Array();
+  itemList = JSON.parse(localStorage.getItem("itemList"))?JSON.parse(localStorage.getItem("itemList")):[]
+  // Create object item
     var item = {
         user: {
             name: username,
             password: password,
             isLogin: isLogin,
         },
-        pollList:[],  
+        pollList: [] 
     }
     
   // Check validate register
@@ -23,20 +25,28 @@ function register(e) {
     alert("All fields are required. Please complete the form.");
     return false;
   }
+
   // 2. Validate email
   if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
     alert("Please enter a valid email address.");
     return false;
   }
+
   // 3. Validate password and repassword do not match 
   if (password != confirmPassword) {
     alert("Password and re-password fields do not match.");
     return false;
-  // 4. Resgister successfully
-  } else {
+  }
 
+  // 4. Resgister successfully 
+  else {
       var json = JSON.stringify(item);
       localStorage.setItem(username, json);
+
+      // Push user lên array itemList
+      itemList.push({item});
+      localStorage.setItem('itemList', JSON.stringify(itemList));
+
       alert("Register successfully!");
       window.location.href = "create-page.html";
   } 

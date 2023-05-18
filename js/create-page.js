@@ -82,7 +82,7 @@ $(document).ready(function () {
             let item = null;
             // Find the user login
             item = itemList.find(currentItem => {
-                return currentItem.user.isLogin === true;
+                return currentItem.item.user.isLogin === true;
             });
 
             // If no login
@@ -91,7 +91,7 @@ $(document).ready(function () {
                 $('#navbar').find('#exampleModal').modal('show');
             } else {
                 // Push new poll to item
-                item.pollList.push(pollObj);
+                item.pollList.push({pollObj});
 
                 // Convert to string
                 itemList = JSON.stringify(itemList);
