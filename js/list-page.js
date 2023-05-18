@@ -3,8 +3,8 @@ $(function() {
 });
 $(document).ready(function () {
     // Retrieve the polls from local storage
-    var storedPolls = localStorage.getItem('polls');
-    var polls = storedPolls ? JSON.parse(storedPolls) : [];
+    var storedPolls = localStorage.getItem('itemList');
+    var polls = JSON.parse(storedPolls);
 
     // Generate table rows for each poll
     var tableRows = '';
@@ -12,7 +12,7 @@ $(document).ready(function () {
         var pollStatus = poll.status || 'Active';
         tableRows += '<tr>';
         tableRows += '<th scope="row">' + (index + 1) + '</th>';
-        tableRows += '<td>' + poll.name + '<span class="badge badge-primary ml-2 poll-status">' + pollStatus + '</span></td>';
+        tableRows += '<td>' + poll.item.user.name + '<span class="badge badge-primary ml-2 poll-status">' + pollStatus + '</span></td>';
         tableRows += '<td>';
         tableRows += '<div class="btn-group mr-2" role="group">';
         tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;">View Poll</button>';
