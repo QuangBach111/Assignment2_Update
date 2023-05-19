@@ -52,3 +52,27 @@ function login(e) {
         });
     });
 }
+
+$(document).ready(function () {
+    let list = new Array();
+    list = JSON.parse(localStorage.getItem("itemList"))?JSON.parse(localStorage.getItem("itemList")):[]
+
+    for(var i = 0; i < list.length; i++) {
+        if(list[i].item.user.isLogin == true) {
+            $("#btnLogin").hide();
+            $("#btnLogout").show();
+            $("#info").text(" " + list[i].item.user.name + " ");
+        }
+    }
+
+    $("#btnLogout").click(function () {
+        for(var i = 0; i < list.length; i++) {
+            if(list[i].item.user.isLogin == true) {
+                $("#btnLogin").show();
+                $("#btnLogout").hide();
+                list[i].item.user.isLogin = false;
+                localStorage.setItem('itemList', JSON.stringify(list));
+            }
+        }
+    });
+});
