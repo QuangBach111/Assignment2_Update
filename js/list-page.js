@@ -1,20 +1,27 @@
-$(function() {
+$(function () {
     $("#navbarLogin").load("login.html");
 });
-$(document).ready(function () {
-    // Retrieve the polls from local storage
-    var storedPolls = localStorage.getItem('polls');
-    var polls = storedPolls ? JSON.parse(storedPolls) : [];
 
-    // Generate table rows for each poll
-    var tableRows = '';
-    polls.forEach(function (poll, index) {
+
+
+$(document).ready(function () {
+
+// Retrieve the itemList from localStorage
+var storedItemList = localStorage.getItem('itemList');
+var itemList = JSON.parse(storedItemList);
+// Generate table rows for each poll
+
+var tableRows = '';
+itemList.forEach(function (item) {
+    var pollList = item.item.pollList;
+    var user = item.item.user; // Retrieve the user object
+    pollList.forEach(function (poll, index) {
         var pollStatus = poll.status || 'Active';
+        var userName = user.name; // Retrieve the user's name
         tableRows += '<tr>';
         tableRows += '<th scope="row">' + (index + 1) + '</th>';
-        tableRows += '<td>' + poll.name + '<span class="badge badge-primary ml-2 poll-status">' + pollStatus + '</span></td>';
-        tableRows += '<td>';
-        tableRows += '<div class="btn-group mr-2" role="group">';
+        tableRows += '<td>' + poll.name + '<span class="badge badge-primary ml-2 poll-status">' + pollStatus + '</span>' + '<br style="border-top: 1px solid #000;"> <hr> <b>Created by</b>: ' +'<span class="badge badge-danger ml-2">' + userName + '</span>' + '</td>';        tableRows += '<td>';
+        tableRows += '<div class="btn-group mr-2 text-center" role="group">';
         tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;">View Poll</button>';
         if (pollStatus === 'Active') {
             tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn-close-poll">Close Poll</button>';
@@ -26,9 +33,10 @@ $(document).ready(function () {
         tableRows += '</td>';
         tableRows += '</tr>';
     });
+});
 
-    // Append the table rows to the table body
-    $('#polls-list').html(tableRows);
+// Append the table rows to the table body
+$('#polls-list').html(tableRows);
 
     // Handle Close Poll button click
 
@@ -50,14 +58,40 @@ $(document).ready(function () {
 
 
     
-    // Handle Delete Poll button click
-    $('.btn-delete-poll').on('click', function () {
-        var row = $(this).closest('tr');
-        var rowIndex = row.index();
-        row.remove();
-        polls.splice(rowIndex, 1);
-        localStorage.setItem('polls', JSON.stringify(polls));
-    });
+// Handle Delete Poll button click
+$('.btn-delete-poll').on('click', function () {
+    var row = $(this).closest('tr');
+    var rowIndex = row.index();
+    
+    // Find the user's poll list
+    var itemList = localStorage.getItem('itemList');
+    itemList = JSON.parse(itemList);
+    
+    // Iterate over each user in the itemList
+    for (var i = 0; i < itemList.length; i++) {
+        var userPollList = itemList[i].item.pollList;
+        
+        // Check if the rowIndex is within the range of the user's poll list
+        if (rowIndex < userPollList.length) {
+            // Remove the poll at the rowIndex from the user's poll list
+            userPollList.splice(rowIndex, 1);
+            
+            // Update the itemList in localStorage
+            localStorage.setItem('itemList', JSON.stringify(itemList));
+            
+            // Remove the table row from the DOM
+            row.remove();
+            
+            // Exit the loop once the poll is deleted
+            break;
+        } else {
+            // Adjust the rowIndex to account for the polls in other users' poll lists
+            rowIndex -= userPollList.length;
+        }
+    }
+});
+
+
 
     // get Item from localStorage
     var itemList = localStorage.getItem('itemList');
@@ -116,4 +150,6 @@ $('.filter-button').on('click', function () {
 $('.filter-button[data-status="Active"]').click();
 
 
+
 });
+
