@@ -8,6 +8,7 @@ function login(e) {
     list = JSON.parse(localStorage.getItem("itemList"))?JSON.parse(localStorage.getItem("itemList")):[]
 
     // Vòng lặp for để kiểm tra điều kiện từng phần tử trong mảng
+    var flag = 0; // biến cờ
     for(var i = 0; i < list.length; i++) {
         if (username == list[i].item.user.name) {
             if (password == list[i].item.user.password) {
@@ -26,7 +27,16 @@ function login(e) {
             } else {
                 alert("Your password is not correct!");
             }
+            break;
+        } 
+        // Kiểm tra điều kiện user không tồn tại 
+        else if (username != list[i].item.user.name && password != list[i].item.user.password) {
+            flag = 1; // bật biến cờ lên nếu user không tồn tại
         }
+    }
+    // Thông báo user không tồn tại 
+    if (flag == 1) {
+        alert("User doesn't be existed in sever! Please login again..");
     }
 
     $(document).ready(function () { // function click nút logout trả isLogin = false

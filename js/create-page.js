@@ -1,8 +1,11 @@
+$(function () {
+    $("#navbar").load("login.html");
+});
 $(document).ready(function () {
-    //load navbar
-    $(function () {
-        $("#navbar").load("login.html");
-    });
+    // load navbar
+    // $(function () {
+    //     $("#navbar").load("login.html");
+    // });
 
     // Add answer btn
     $(document).on('click', '.btn-add-answer', function () {
@@ -12,42 +15,36 @@ $(document).ready(function () {
         $(this).closest('.answer-list').append(answer);
     });
 
-
-    //    Add question button
+    //  Add question btn
     $('#btn-add-question').click(function () {
-        $('.question-field').append($questionItemField.clone());
+        var question = $('.question:last').clone();
+        question.find("input[type='text']").val('');
+        // set at default answer (only one answer)
+        question.find('.answer:not(:first-child)').remove();
+        $('.question-list').append(question);
     });
 
-    const addAnswerBtn = document.querySelectorAll('.btn-add-answer');
-
-    addAnswerBtn.forEach(obj => {
-        console.log(obj.id);
-    })
-
-// Handle form submission
-$('form').submit(function (event) {
-    event.preventDefault();
+    // Submit event
+    $('form').submit(function (event) {
+        event.preventDefault();
 
         // Create poll obj
         var pollObj = {
-            name: String,
+            name: '',
             questionList: [],
             isActive: true
         };
 
-    // Add the new poll to the polls array
-    polls.push(newPoll);
+        console.log(pollObj.isActive);
 
-    // Save the updated polls array to local storage
-    localStorage.setItem('polls', JSON.stringify(polls));
-
-    // Reset the form
-    $('form')[0].reset();
+        // poll name
+        pollObj.name = $('.name-poll-input').val();
 
         // Question loop
         $('.question').each(function () {
+
             // Create questionObj
-            var questionObj = {
+            let questionObj = {
                 questionContent: String,
                 answerList: []
             };
@@ -55,21 +52,18 @@ $('form').submit(function (event) {
             // Get question input
             questionObj.questionContent = $(this).find('.question-input').val();
 
-
             // LOOP: answer
-            var $answerList = $(this).find('.answer-field >.answer-list > .answer');
+            let $answerList = $(this).find('.answer-field >.answer-list > .answer');
             $answerList.each(function () {
 
                 // Create answer obj
-                var answerObj = {
+                let answerObj = {
                     answerContent: String,
                     status: Boolean
                 };
 
-
                 // Get answer content
                 answerObj.answerContent = $(this).find('.answer-input').val();
-
 
                 // Add answerObj to questionObj
                 questionObj.answerList.push(answerObj);
@@ -79,18 +73,24 @@ $('form').submit(function (event) {
             pollObj.questionList.push(questionObj);
         });
 
+        console.log(`before pollObj ${pollObj}`);
+
         // get listItem from localStorage (JSON)
-        var itemList = localStorage.getItem('itemList');
+        let itemList = localStorage.getItem('itemList');
+
+        // Convert itemList to array
+        itemList = JSON.parse(itemList);
+
         console.log(`itemList String: ${itemList}`);
 
         // listItems is null, show login page
         if (!itemList) {
             // pop up login modal   
-            jQuery.noConflict();
+            // jQuery.noConflict();
             $('#navbar').find('#exampleModal').modal('show');
         } else {
-            // Convert itemList to array
-            itemList = JSON.parse(itemList);
+            // Find the user login
+
             let item = null;
             // Find the user login
             item = itemList.find(currentItem => {
@@ -102,6 +102,7 @@ $('form').submit(function (event) {
                 // pop up login modal
                 $('#navbar').find('#exampleModal').modal('show');
             } else {
+
                 // Push new poll to item
                 item.item.pollList.push(pollObj);
 
@@ -125,7 +126,6 @@ $('form').submit(function (event) {
 
             $.ajax({
                 type: 'GET',
-                url: 'http://127.0.0.1:5501/',
                 success: function (resp) {
                     window.location.href = 'home-page.html';
                 },
@@ -135,4 +135,4 @@ $('form').submit(function (event) {
             });
         }
     });
-});
+})
