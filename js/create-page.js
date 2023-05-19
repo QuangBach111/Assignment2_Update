@@ -1,11 +1,8 @@
-$(function () {
-    $("#navbar").load("login.html");
-});
 $(document).ready(function () {
     // load navbar
-    // $(function () {
-    //     $("#navbar").load("login.html");
-    // });
+    $(function () {
+        $("#navbar").load("login.html");
+    });
 
     // Add answer btn
     $(document).on('click', '.btn-add-answer', function () {
