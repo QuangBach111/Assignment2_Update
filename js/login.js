@@ -30,7 +30,7 @@ function login(e) {
             break;
         } 
         // Kiểm tra điều kiện user không tồn tại 
-        else if (username != list[i].item.user.name && password != list[i].item.user.password) {
+        else if (username != list[i].item.user.name) {
             flag = 1; // bật biến cờ lên nếu user không tồn tại
         }
     }
