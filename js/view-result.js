@@ -1,8 +1,8 @@
 $(document).ready(function () {
     $(function () {
-        $("#navbar").load("login.html");
+        $("#navbarLogin").load("login.html");
     });
-
+    event.preventDefault();
     // get itemList
     let itemList = getDataFromLocalStorage();
 
@@ -36,55 +36,26 @@ $(document).ready(function () {
             let answerList = question.answerList;
 
             answerList.forEach(answer => {
-
-                // let $answerDiv = $(`<div class="form-group custom-control custom-radio answer">`)
-                // let $answerlabel = ` <label class="custom-control-label" >${answer.answerContent}</label>`;
-                // let $input = $(`<input type="checkbox" class="custom-control-input" checked="checked">`);
+                let isCheck = answer.status;
 
                 let $answerList = $('<div>').attr('class', 'answer-list');
                 let $answer = $('<div>').attr('class', 'answer')
 
                 let $answerLabel = $("<label>").attr("class", "ml-2").text(answer.answerContent)
 
-                let $input = $("<input>").attr({'type': 'checkbox', 'value': ' ', 'class': 'checkbox-answer'})
-
                 $question.append($answerList);
                 $answerList.append($answer);
-                $answer.append($input);
-                $answer.append($answerLabel);
-            })
-        });
 
-        $('#form-homepage').submit(function (e) {
-            e.preventDefault()
-
-            console.log($('#question-list'));
-            $(this).find($('.question')).each(function (questionIndex, question) {
-                $(this).find($('.answer-list')).each(function (answerIndex, answer) {
-                    let $checkbox = $(this).find($('.checkbox-answer'));
-
-                    let isChecked = $($checkbox).is(":checked");
-
-                    questionList[questionIndex].answerList[answerIndex].status = isChecked;
-                })
-            });
-
-            localStorage.setItem('itemList', JSON.stringify(itemList));
-            $.ajax({
-                type: 'GET',
-                success: function (result) {
-                    window.location.href = 'view-result.html'
-                    alert('Retain successfully!"')
-                },
-                error: function (error) {
-                    console.log(error)
+                if (isCheck) {
+                    $answer.append($(`<input type="checkbox" checked="checked" disabled/>`));
+                } else {
+                    $answer.append($(`<input type="checkbox" disabled/>`));
                 }
+                $answer.append($answerLabel);
+
+
             })
         });
-
-
-
-
     }
 });
 

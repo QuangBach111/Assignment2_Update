@@ -1,50 +1,50 @@
 function register(e) {
-  event.preventDefault();
-  // Declare var elements of user
-  var username = document.getElementById("username").value;
-  var email = document.getElementById("email").value;
-  var password = document.getElementById("password").value;
-  var confirmPassword = document.getElementById("repassword").value;
-  var isLogin = false;
+    event.preventDefault();
+    // Declare var elements of user
+    var username = document.getElementById("username").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("repassword").value;
+    var isLogin = false;
 
-  let itemList = new Array();
-  itemList = JSON.parse(localStorage.getItem("itemList"))?JSON.parse(localStorage.getItem("itemList")):[];
-  // Create object item
+    let itemList = new Array();
+    itemList = JSON.parse(localStorage.getItem("itemList")) ? JSON.parse(localStorage.getItem("itemList")) : [];
+    // Create object item
     var item = {
         user: {
             name: username,
             password: password,
             isLogin: isLogin,
         },
-        pollList: [] 
+        pollList: []
     }
-    
-  // Check validate register
-  // 1. User dont't input 4 fields
-  if (username == "" || email == "" || password == "" || confirmPassword == "") {
-    alert("All fields are required. Please complete the form.");
-    return false;
-  }
 
-  // 2. Validate email
-  if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-    alert("Please enter a valid email address.");
-    return false;
-  }
+    // Check validate register
+    // 1. User dont't input 4 fields
+    if (username == "" || email == "" || password == "" || confirmPassword == "") {
+        alert("All fields are required. Please complete the form.");
+        // return false;
+    }
 
-  // 3. Validate password and repassword do not match 
-  if (password != confirmPassword) {
-    alert("Password and re-password fields do not match.");
-    return false;
-  }
+    // 2. Validate email
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        alert("Please enter a valid email address.");
+        // return false;
+    }
 
-  // 4. Resgister successfully 
-  else {
-     // Push user lên array itemList
-      itemList.push({item});
-      localStorage.setItem('itemList', JSON.stringify(itemList));
+    // 3. Validate password and repassword do not match
+    if (password != confirmPassword) {
+        alert("Password and re-password fields do not match.");
+        // return false;
+    }
 
-      alert("Register successfully!");
-      window.location.href = "create-page.html";
-  } 
+    // 4. Resgister successfully
+    else {
+        // Push user lên array itemList
+        itemList.push({item});
+        localStorage.setItem('itemList', JSON.stringify(itemList));
+
+        alert("Register successfully!");
+        window.location.href = "create-page.html";
+    }
 }
