@@ -6,150 +6,535 @@ $(function () {
 
 $(document).ready(function () {
 
+    const ITEM_LIST = 'itemList';
+
 // Retrieve the itemList from localStorage
-var storedItemList = localStorage.getItem('itemList');
-var itemList = JSON.parse(storedItemList);
+    var storedItemList = localStorage.getItem(ITEM_LIST);
+    var itemList = JSON.parse(storedItemList);
 // Generate table rows for each poll
 
-var tableRows = '';
-itemList.forEach(function (item) {
-    var pollList = item.item.pollList;
-    var user = item.item.user; // Retrieve the user object
-    pollList.forEach(function (poll, index) {
-        var pollStatus = poll.status || 'Active';
-        var userName = user.name; // Retrieve the user's name
-        tableRows += '<tr>';
-        tableRows += '<th scope="row">' + (index + 1) + '</th>';
-        tableRows += '<td>' + poll.name + '<span class="badge badge-primary ml-2 poll-status">' + pollStatus + '</span>' + '<br style="border-top: 1px solid #000;"> <hr> <b>Created by</b>: ' +'<span class="badge badge-danger ml-2">' + userName + '</span>' + '</td>';        tableRows += '<td>';
-        tableRows += '<div class="btn-group mr-2 text-center" role="group">';
-        tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;">View Poll</button>';
-        if (pollStatus === 'Active') {
-            tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn-close-poll">Close Poll</button>';
-        } else if (pollStatus === 'Closed') {
-            tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn-open-poll">Open Poll</button>';
-        }
-        tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn-delete-poll">Delete</button>';
-        tableRows += '</div>';
-        tableRows += '</td>';
-        tableRows += '</tr>';
+    var tableRows = '';
+    itemList.forEach(function (item) {
+        var pollList = item.item.pollList;
+        var user = item.item.user; // Retrieve the user object
+        pollList.forEach(function (poll, index) {
+            var pollStatus = poll.isActive;
+            var userName = user.name; // Retrieve the user's name
+            tableRows += '<tr>';
+            tableRows += '<th scope="row">' + (index + 1) + '</th>';
+            tableRows += '<td>' + poll.name + '<span class="badge badge-primary ml-2 poll-status">' + (pollStatus ? 'Active' : 'Closed') + '</span>' + '<br style="border-top: 1px solid #000;"> <hr> <b>Created by</b>: ' +'<span class="badge badge-danger ml-2">' + userName + '</span>' + '</td>';        tableRows += '<td>';
+            tableRows += '<div class="btn-group mr-2" role="group">';
+            tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-primary btn-view-result">View result</button>';
+            if (pollStatus) {
+                tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-dark btn-close-poll">Close Poll</button>';
+            } else if (!pollStatus) {
+                tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-dark btn-open-poll">Open Poll</button>';
+            }
+            tableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-danger btn-delete-poll">Delete</button>';
+            tableRows += '</div>';
+            tableRows += '</td>';
+            tableRows += '</tr>';
+
+
+        });
     });
-});
+
 
 // Append the table rows to the table body
-$('#polls-list').html(tableRows);
-
-    // Handle Close Poll button click
-
-    $('.btn-close-poll').on('click', function () {
-        var row = $(this).closest('tr');
-        var pollStatusBadge = row.find('.poll-status');
-        var pollStatus = pollStatusBadge.text();
-    
-        if (pollStatus === 'Active') {
-            pollStatusBadge.text('Closed');
-            pollStatusBadge.addClass('badge-secondary'); // Add the badge-secondary class
-            $(this).text('Open Poll');
-        } else if (pollStatus === 'Closed') {
-            pollStatusBadge.text('Active');
-            pollStatusBadge.removeClass('badge-secondary'); // Remove the badge-secondary class
-            $(this).text('Close Poll');
-        }
-    });
+    $('#polls-list').html(tableRows);
 
 
-    
-// Handle Delete Poll button click
-$('.btn-delete-poll').on('click', function () {
-    var row = $(this).closest('tr');
-    var rowIndex = row.index();
-    
-    // Find the user's poll list
-    var itemList = localStorage.getItem('itemList');
-    itemList = JSON.parse(itemList);
-    
-    // Iterate over each user in the itemList
-    for (var i = 0; i < itemList.length; i++) {
-        var userPollList = itemList[i].item.pollList;
-        
-        // Check if the rowIndex is within the range of the user's poll list
-        if (rowIndex < userPollList.length) {
-            // Remove the poll at the rowIndex from the user's poll list
-            userPollList.splice(rowIndex, 1);
-            
+
+
+    //handle the All filter button
+    $(document).on('click', '#allButton', function(){
+        $('#polls-list').html(tableRows);
+
+        // Handle Close Poll button click
+        $('.btn-close-poll').on('click', function () {
+            var self = this; // Store reference to the button
+
+            var row = $(this).closest('tr');
+            var pollStatusBadge = row.find('.poll-status');
+            var pollStatusText = pollStatusBadge.text();
+            var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
+
+            // Find the corresponding poll object in the itemList array
+            var pollIndex = row.index();
+            var itemList = localStorage.getItem('itemList');
+            itemList = JSON.parse(itemList);
+
+            // Loop through each item in the itemList and update the poll status
+            itemList.forEach(function (user, userIndex) {
+                user.item.pollList.forEach(function (poll, innerPollIndex) {
+                    if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                        if (pollStatus) {
+                            poll.isActive = false; // Set isActive to false
+                            pollStatusBadge.text('Closed');
+                            pollStatusBadge.addClass('badge-secondary');
+                            $(self).text('Open Poll');
+                        } else {
+                            poll.isActive = true; // Set isActive to true
+                            pollStatusBadge.text('Active');
+                            pollStatusBadge.removeClass('badge-secondary');
+                            $(self).text('Close Poll');
+                        }
+                    }
+                });
+            });
+
             // Update the itemList in localStorage
             localStorage.setItem('itemList', JSON.stringify(itemList));
-            
-            // Remove the table row from the DOM
-            row.remove();
-            
-            // Exit the loop once the poll is deleted
-            break;
-        } else {
-            // Adjust the rowIndex to account for the polls in other users' poll lists
-            rowIndex -= userPollList.length;
-        }
-    }
-});
+        });
 
+// Handle Open Poll button click
+        $('.btn-open-poll').on('click', function () {
+            var self = this; // Store reference to the button
 
+            var row = $(this).closest('tr');
+            var pollStatusBadge = row.find('.poll-status');
+            var pollStatusText = pollStatusBadge.text();
+            var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
 
-    // get Item from localStorage
-    var itemList = localStorage.getItem('itemList');
-    // convert String to Array
-    itemList = JSON.parse(itemList);
-    //find the active account
-    item ={
-       user: {
-           name: String,
-           password: String,
-           isLogin: Boolean,
-       },
-       polls:[],
-    }
+            // Find the corresponding poll object in the itemList array
+            var pollIndex = row.index();
+            var itemList = localStorage.getItem('itemList');
+            itemList = JSON.parse(itemList);
 
-    var pollObj={
-       name: String,
-       questionList: [],
-       status : 'active',
-    };
-   var questionObj={
-       questionContent: String,
-       answerList:[],
-   }
-   // duyet acc de check tai khoan login de lay du lieu trong do ra 
-   var itemList = localStorage.getItem('itemList');
-   var item;
-   for(let i = 0; i< itemList.length; i++) {
-       let isLogin = itemList[i].user.isLogin;
-       if(isLogin) {
-           item = itemList[i];
-           break;
-       }
-   }
+            // Loop through each item in the itemList and update the poll status
+            itemList.forEach(function (user, userIndex) {
+                user.item.pollList.forEach(function (poll, innerPollIndex) {
+                    if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                        if (pollStatus) {
+                            poll.isActive = false; // Set isActive to false
+                            pollStatusBadge.text('Closed');
+                            pollStatusBadge.addClass('badge-secondary');
+                            $(self).text('Open Poll');
+                        } else {
+                            poll.isActive = true; // Set isActive to true
+                            pollStatusBadge.text('Active');
+                            pollStatusBadge.removeClass('badge-secondary');
+                            $(self).text('Close Poll');
+                        }
+                    }
+                });
+            });
 
-// Handle filter button click
-$('.filter-button').on('click', function () {
-    // Get the status associated with the clicked button
-    var filterStatus = $(this).data('status');
+            // Update the itemList in localStorage
+            localStorage.setItem('itemList', JSON.stringify(itemList));
+        });
 
-    // Hide all table rows initially
-    $('#polls-list tbody tr').hide();
+    })
+//handle the Active filter button
+    $(document).on('click', '#activeButton', function() {
+        var activeTableRows = '';
 
-    // Show the table rows with the matching status
-    $('#polls-list tbody tr').each(function () {
-        var pollStatusBadge = $(this).find('.poll-status');
-        var pollStatus = pollStatusBadge.text();
+        itemList.forEach(function (item) {
+            var pollList = item.item.pollList;
+            var user = item.item.user; // Retrieve the user object
 
-        if (pollStatus === filterStatus) {
-            $(this).show();
-        }
+            pollList.forEach(function (poll, index) {
+                var pollStatus = poll.isActive;
+                var userName = user.name; // Retrieve the user's name
+
+                if (pollStatus) { // Only display polls with isActive status as true
+                    activeTableRows += '<tr>';
+                    activeTableRows += '<th scope="row">' + (index + 1) + '</th>';
+                    activeTableRows += '<td>' + poll.name + '<span class="badge badge-primary ml-2 poll-status">' + (pollStatus ? 'Active' : 'Closed') + '</span>' + '<br style="border-top: 1px solid #000;"> <hr> <b>Created by</b>: ' +'<span class="badge badge-danger ml-2">' + userName + '</span>' + '</td>';
+                    activeTableRows += '<td>';
+                    activeTableRows += '<div class="btn-group mr-2" role="group">';
+                    activeTableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-primary">View result</button>';
+                    if (pollStatus) {
+                        activeTableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-dark btn-close-poll">Close Poll</button>';
+                    } else if (!pollStatus) {
+                        activeTableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-dark btn-open-poll">Open Poll</button>';
+                    }
+                    activeTableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-danger btn-delete-poll">Delete</button>';
+                    activeTableRows += '</div>';
+                    activeTableRows += '</td>';
+                    activeTableRows += '</tr>';
+                }
+            });
+        });
+
+        //append the active table row on the table
+        $('#polls-list').html(activeTableRows);
+
+        // Handle Close Poll button click
+        $('.btn-close-poll').on('click', function () {
+            var self = this; // Store reference to the button
+
+            var row = $(this).closest('tr');
+            var pollStatusBadge = row.find('.poll-status');
+            var pollStatusText = pollStatusBadge.text();
+            var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
+
+            // Find the corresponding poll object in the itemList array
+            var pollIndex = row.index();
+            var itemList = localStorage.getItem('itemList');
+            itemList = JSON.parse(itemList);
+
+            // Loop through each item in the itemList and update the poll status
+            itemList.forEach(function (user, userIndex) {
+                user.item.pollList.forEach(function (poll, innerPollIndex) {
+                    if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                        if (pollStatus) {
+                            poll.isActive = false; // Set isActive to false
+                            pollStatusBadge.text('Closed');
+                            pollStatusBadge.addClass('badge-secondary');
+                            $(self).text('Open Poll');
+                        } else {
+                            poll.isActive = true; // Set isActive to true
+                            pollStatusBadge.text('Active');
+                            pollStatusBadge.removeClass('badge-secondary');
+                            $(self).text('Close Poll');
+                        }
+                    }
+                });
+            });
+
+            // Update the itemList in localStorage
+            localStorage.setItem('itemList', JSON.stringify(itemList));
+        });
+
+// Handle Open Poll button click
+        $('.btn-open-poll').on('click', function () {
+            var self = this; // Store reference to the button
+
+            var row = $(this).closest('tr');
+            var pollStatusBadge = row.find('.poll-status');
+            var pollStatusText = pollStatusBadge.text();
+            var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
+
+            // Find the corresponding poll object in the itemList array
+            var pollIndex = row.index();
+            var itemList = localStorage.getItem('itemList');
+            itemList = JSON.parse(itemList);
+
+            // Loop through each item in the itemList and update the poll status
+            itemList.forEach(function (user, userIndex) {
+                user.item.pollList.forEach(function (poll, innerPollIndex) {
+                    if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                        if (pollStatus) {
+                            poll.isActive = false; // Set isActive to false
+                            pollStatusBadge.text('Closed');
+                            pollStatusBadge.addClass('badge-secondary');
+                            $(self).text('Open Poll');
+                        } else {
+                            poll.isActive = true; // Set isActive to true
+                            pollStatusBadge.text('Active');
+                            pollStatusBadge.removeClass('badge-secondary');
+                            $(self).text('Close Poll');
+                        }
+                    }
+                });
+            });
+
+            // Update the itemList in localStorage
+            localStorage.setItem('itemList', JSON.stringify(itemList));
+        });
+
     });
+
+//handle the Closed filter button
+    $(document).on('click', '#closedButton', function() {
+        var closedTableRows = '';
+
+        itemList.forEach(function (item) {
+            var pollList = item.item.pollList;
+            var user = item.item.user; // Retrieve the user object
+
+            pollList.forEach(function (poll, index) {
+                var pollStatus = poll.isActive;
+                var userName = user.name; // Retrieve the user's name
+
+                if (!pollStatus) { // Only display polls with isActive status as true
+                    closedTableRows += '<tr>';
+                    closedTableRows += '<th scope="row">' + (index + 1) + '</th>';
+                    closedTableRows += '<td>' + poll.name + '<span class="badge badge-primary ml-2 poll-status">' + (pollStatus ? 'Active' : 'Closed') + '</span>' + '<br style="border-top: 1px solid #000;"> <hr> <b>Created by</b>: ' +'<span class="badge badge-danger ml-2">' + userName + '</span>' + '</td>';
+                    closedTableRows += '<td>';
+                    closedTableRows += '<div class="btn-group mr-2" role="group">';
+                    closedTableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-primary">View result</button>';
+                    if (pollStatus) {
+                        closedTableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-dark btn-close-poll">Close Poll</button>';
+                    } else if (!pollStatus) {
+                        closedTableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-dark btn-open-poll">Open Poll</button>';
+                    }
+                    closedTableRows += '<button type="button" style="margin: 2px; border: 1px solid; border-radius: 5px;" class="btn btn-danger btn-delete-poll">Delete</button>';
+                    closedTableRows += '</div>';
+                    closedTableRows += '</td>';
+                    closedTableRows += '</tr>';
+                }
+            });
+        });
+
+        //append the closed table row on the table
+        $('#polls-list').html(closedTableRows);
+
+        // Handle Close Poll button click
+        $('.btn-close-poll').on('click', function () {
+            var self = this; // Store reference to the button
+
+            var row = $(this).closest('tr');
+            var pollStatusBadge = row.find('.poll-status');
+            var pollStatusText = pollStatusBadge.text();
+            var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
+
+            // Find the corresponding poll object in the itemList array
+            var pollIndex = row.index();
+            var itemList = localStorage.getItem('itemList');
+            itemList = JSON.parse(itemList);
+
+            // Loop through each item in the itemList and update the poll status
+            itemList.forEach(function (user, userIndex) {
+                user.item.pollList.forEach(function (poll, innerPollIndex) {
+                    if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                        if (pollStatus) {
+                            poll.isActive = false; // Set isActive to false
+                            pollStatusBadge.text('Closed');
+                            pollStatusBadge.addClass('badge-secondary');
+                            $(self).text('Open Poll');
+                        } else {
+                            poll.isActive = true; // Set isActive to true
+                            pollStatusBadge.text('Active');
+                            pollStatusBadge.removeClass('badge-secondary');
+                            $(self).text('Close Poll');
+                        }
+                    }
+                });
+            });
+
+            // Update the itemList in localStorage
+            localStorage.setItem('itemList', JSON.stringify(itemList));
+        });
+
+// Handle Open Poll button click
+        $('.btn-open-poll').on('click', function () {
+            var self = this; // Store reference to the button
+
+            var row = $(this).closest('tr');
+            var pollStatusBadge = row.find('.poll-status');
+            var pollStatusText = pollStatusBadge.text();
+            var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
+
+            // Find the corresponding poll object in the itemList array
+            var pollIndex = row.index();
+            var itemList = localStorage.getItem('itemList');
+            itemList = JSON.parse(itemList);
+
+            // Loop through each item in the itemList and update the poll status
+            itemList.forEach(function (user, userIndex) {
+                user.item.pollList.forEach(function (poll, innerPollIndex) {
+                    if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                        if (pollStatus) {
+                            poll.isActive = false; // Set isActive to false
+                            pollStatusBadge.text('Closed');
+                            pollStatusBadge.addClass('badge-secondary');
+                            $(self).text('Open Poll');
+                        } else {
+                            poll.isActive = true; // Set isActive to true
+                            pollStatusBadge.text('Active');
+                            pollStatusBadge.removeClass('badge-secondary');
+                            $(self).text('Close Poll');
+                        }
+                    }
+                });
+            });
+
+            // Update the itemList in localStorage
+            localStorage.setItem('itemList', JSON.stringify(itemList));
+        });
+
+    });
+
+
+
+
+
+
+// Handle Close Poll button click
+    $('.btn-close-poll').on('click', function () {
+        var self = this; // Store reference to the button
+
+        var row = $(this).closest('tr');
+        var pollStatusBadge = row.find('.poll-status');
+        var pollStatusText = pollStatusBadge.text();
+        var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
+
+        // Find the corresponding poll object in the itemList array
+        var pollIndex = row.index();
+        var itemList = localStorage.getItem('itemList');
+        itemList = JSON.parse(itemList);
+
+        // Loop through each item in the itemList and update the poll status
+        itemList.forEach(function (user, userIndex) {
+            user.item.pollList.forEach(function (poll, innerPollIndex) {
+                if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                    if (pollStatus) {
+                        poll.isActive = false; // Set isActive to false
+                        pollStatusBadge.text('Closed');
+                        pollStatusBadge.addClass('badge-secondary');
+                        $(self).text('Open Poll');
+                    } else {
+                        poll.isActive = true; // Set isActive to true
+                        pollStatusBadge.text('Active');
+                        pollStatusBadge.removeClass('badge-secondary');
+                        $(self).text('Close Poll');
+                    }
+                }
+            });
+        });
+
+        // Update the itemList in localStorage
+        localStorage.setItem('itemList', JSON.stringify(itemList));
+
+        // Handle Close Poll button click
+        $('.btn-close-poll').on('click', function () {
+            var self = this; // Store reference to the button
+
+            var row = $(this).closest('tr');
+            var pollStatusBadge = row.find('.poll-status');
+            var pollStatusText = pollStatusBadge.text();
+            var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
+
+            // Find the corresponding poll object in the itemList array
+            var pollIndex = row.index();
+            var itemList = localStorage.getItem('itemList');
+            itemList = JSON.parse(itemList);
+
+            // Loop through each item in the itemList and update the poll status
+            itemList.forEach(function (user, userIndex) {
+                user.item.pollList.forEach(function (poll, innerPollIndex) {
+                    if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                        if (pollStatus) {
+                            poll.isActive = false; // Set isActive to false
+                            pollStatusBadge.text('Closed');
+                            pollStatusBadge.addClass('badge-secondary');
+                            $(self).text('Open Poll');
+                        } else {
+                            poll.isActive = true; // Set isActive to true
+                            pollStatusBadge.text('Active');
+                            pollStatusBadge.removeClass('badge-secondary');
+                            $(self).text('Close Poll');
+                        }
+                    }
+                });
+            });
+
+            // Update the itemList in localStorage
+            localStorage.setItem('itemList', JSON.stringify(itemList));
+        });
+
+// Handle Open Poll button click
+        $('.btn-open-poll').on('click', function () {
+            var self = this; // Store reference to the button
+
+            var row = $(this).closest('tr');
+            var pollStatusBadge = row.find('.poll-status');
+            var pollStatusText = pollStatusBadge.text();
+            var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
+
+            // Find the corresponding poll object in the itemList array
+            var pollIndex = row.index();
+            var itemList = localStorage.getItem('itemList');
+            itemList = JSON.parse(itemList);
+
+            // Loop through each item in the itemList and update the poll status
+            itemList.forEach(function (user, userIndex) {
+                user.item.pollList.forEach(function (poll, innerPollIndex) {
+                    if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                        if (pollStatus) {
+                            poll.isActive = false; // Set isActive to false
+                            pollStatusBadge.text('Closed');
+                            pollStatusBadge.addClass('badge-secondary');
+                            $(self).text('Open Poll');
+                        } else {
+                            poll.isActive = true; // Set isActive to true
+                            pollStatusBadge.text('Active');
+                            pollStatusBadge.removeClass('badge-secondary');
+                            $(self).text('Close Poll');
+                        }
+                    }
+                });
+            });
+
+            // Update the itemList in localStorage
+            localStorage.setItem('itemList', JSON.stringify(itemList));
+        });
+
+    });
+
+// Handle Open Poll button click
+    $('.btn-open-poll').on('click', function () {
+        var self = this; // Store reference to the button
+
+        var row = $(this).closest('tr');
+        var pollStatusBadge = row.find('.poll-status');
+        var pollStatusText = pollStatusBadge.text();
+        var pollStatus = pollStatusText === 'Active'; // Convert the text to a boolean value
+
+        // Find the corresponding poll object in the itemList array
+        var pollIndex = row.index();
+        var itemList = localStorage.getItem('itemList');
+        itemList = JSON.parse(itemList);
+
+        // Loop through each item in the itemList and update the poll status
+        itemList.forEach(function (user, userIndex) {
+            user.item.pollList.forEach(function (poll, innerPollIndex) {
+                if (innerPollIndex === pollIndex) { // <-- Use innerPollIndex instead of pollIndex
+                    if (pollStatus) {
+                        poll.isActive = false; // Set isActive to false
+                        pollStatusBadge.text('Closed');
+                        pollStatusBadge.addClass('badge-secondary');
+                        $(self).text('Open Poll');
+                    } else {
+                        poll.isActive = true; // Set isActive to true
+                        pollStatusBadge.text('Active');
+                        pollStatusBadge.removeClass('badge-secondary');
+                        $(self).text('Close Poll');
+                    }
+                }
+            });
+        });
+
+        // Update the itemList in localStorage
+        localStorage.setItem('itemList', JSON.stringify(itemList));
+    });
+
 });
 
-// Show all table rows when the page is loaded
-$('.filter-button[data-status="Active"]').click();
+// Handle Delete Poll button click
+$(document).on('click', '.btn-delete-poll', function () {
+    var row = $(this).closest('tr');
+    var rowIndex = row.index();
 
+    // Ask for confirmation
+    var confirmDelete = confirm("Are you sure you want to delete this poll?");
 
+    if (confirmDelete) {
+        // Find the user's poll list
+        var itemList = localStorage.getItem('itemList');
+        itemList = JSON.parse(itemList);
 
+        // Loop through each item in itemList to find the correct user and poll
+        for (var i = 0; i < itemList.length; i++) {
+            var user = itemList[i].item.user;
+            var pollList = itemList[i].item.pollList;
+
+            // Loop through the pollList to find the correct poll at the rowIndex
+            for (var j = 0; j < pollList.length; j++) {
+                if (j === rowIndex) {
+                    // Remove the poll at the rowIndex from the user's poll list
+                    pollList.splice(j, 1);
+
+                    // Update the itemList in localStorage
+                    localStorage.setItem('itemList', JSON.stringify(itemList));
+
+                    // Remove the table row from the DOM
+                    row.remove();
+                    break;
+                }
+            }
+        }
+    }
 });
-

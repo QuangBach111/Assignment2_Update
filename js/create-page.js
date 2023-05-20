@@ -1,7 +1,8 @@
+
 $(document).ready(function () {
     // load navbar
     $(function () {
-        $("#navbar").load("login.html");
+        $('#navbarLogin').load('login.html');
     });
 
     // Add answer btn
@@ -22,7 +23,7 @@ $(document).ready(function () {
     });
 
     // Submit event
-    $('form').submit(function (event) {
+    $('#form-create').submit(function (event) {
         event.preventDefault();
 
         // Create poll obj
@@ -32,7 +33,8 @@ $(document).ready(function () {
             isActive: true
         };
 
-        console.log(pollObj.isActive);
+        // console.log(pollObj.isActive);
+        console.log(`poll object ${pollObj.isActive}`);
 
         // poll name
         pollObj.name = $('.name-poll-input').val();
@@ -56,7 +58,7 @@ $(document).ready(function () {
                 // Create answer obj
                 let answerObj = {
                     answerContent: String,
-                    status: Boolean
+                    status: false
                 };
 
                 // Get answer content
@@ -82,7 +84,7 @@ $(document).ready(function () {
 
         // listItems is null, show login page
         if (!itemList) {
-            // pop up login modal   
+            // pop up login modal
             // jQuery.noConflict();
             $('#navbar').find('#exampleModal').modal('show');
         } else {
